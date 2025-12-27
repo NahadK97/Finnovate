@@ -53,7 +53,10 @@ const PaymentForm = () => {
     };
 
     try {
-      const data = await analyzeRisk(payload, user);
+      // ensure payload includes username
+      const enrichedPayload = { ...payload, username: user?.username || 'demo_user' };
+      const data = await analyzeRisk(enrichedPayload);
+
       setResult(data);
       // Optional: Auto-navigate back to step 1 to show result clearly alongside amount
       // setCurrentStep(1); 

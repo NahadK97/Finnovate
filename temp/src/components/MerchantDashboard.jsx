@@ -50,7 +50,10 @@ const handleSubmit = async (e) => {
     };
 
     try {
-      const data = await analyzeRisk(payload, user);
+      // ensure payload includes username
+      const enrichedPayload = { ...payload, username: user?.username || 'demo_user' };
+      const data = await analyzeRisk(enrichedPayload);
+
       setResult(data);
 
       // 1. Wait for the result visual (2.5s) then show Alert
