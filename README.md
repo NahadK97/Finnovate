@@ -8,26 +8,26 @@
 
 E-commerce platforms face significant financial losses due to fraudulent credit card transactions. This project provides a standalone solution to:
 
-* Identify high-risk transactions before they are processed.
-* Offer transparent reasoning for flagged events via a technical dashboard.
-* Provide a seamless integration point for merchants via a RESTful API.
+- Identify high-risk transactions before they are processed.
+- Offer transparent reasoning for flagged events via a technical dashboard.
+- Provide a seamless integration point for merchants via a RESTful API.
 
 ## 🧠 The ML Approach
 
-* **Model Selection:** The system utilizes a **Random Forest Classifier**, which was chosen over Logistic Regression for its superior handling of complex, non-linear fraud patterns.
-* **Feature Selection:** The model focuses on the `Amount` and PCA-transformed variables `V1` through `V28`.
-* **Data Handling:** The `Time` attribute is excluded to ensure model generalizability across different timeframes.
-* **Optimization:** The pipeline uses stratified splits and handles class imbalance to ensure high precision in detecting rare fraud cases.
+- **Model Selection:** The system utilizes a **Random Forest Classifier**, which was chosen over Logistic Regression for its superior handling of complex, non-linear fraud patterns.
+- **Feature Selection:** The model focuses on the `Amount` and PCA-transformed variables `V1` through `V28`.
+- **Data Handling:** The `Time` attribute is excluded to ensure model generalizability across different timeframes.
+- **Optimization:** The pipeline uses stratified splits and handles class imbalance to ensure high precision in detecting rare fraud cases.
 
 ## 🛠️ Tech Stack
 
 The project is built with the following technologies:
 
-* **Backend:** Flask, PyJWT (Authentication), Werkzeug.
-* **Machine Learning:** Scikit-learn, Pandas, Joblib.
-* **Database:** MongoDB (via PyMongo).
-* **Frontend:** React, Vite, Context API.
-* **Environment:** Python-Dotenv.
+- **Backend:** Flask, PyJWT (Authentication), Werkzeug.
+- **Machine Learning:** Scikit-learn, Pandas, Joblib.
+- **Database:** MongoDB (via PyMongo).
+- **Frontend:** React, Vite, Context API.
+- **Environment:** Python-Dotenv.
 
 ---
 
@@ -98,15 +98,15 @@ npm run dev
 
 ## ✨ Key Features
 
-* **Risk Gauge:** Real-time visual representation of fraud probability.
-* **Technical Panel:** Detailed breakdown of feature influences for administrators.
-* **Secure Auth:** JWT-protected routes for merchant and admin access.
-* **Automated Logging:** All flagged transactions are stored in MongoDB for future model retraining.
+- **Risk Gauge:** Real-time visual representation of fraud probability.
+- **Technical Panel:** Detailed breakdown of feature influences for administrators.
+- **Secure Auth:** JWT-protected routes for merchant and admin access.
+- **Automated Logging:** All flagged transactions are stored in MongoDB for future model retraining.
 
 ---
 
 ## 📸 Screenshots & Demos
 
-* **Merchant Dashboard:** Instant view of transaction health.
-* **Risk Analysis:** Demonstration of the `RiskGauge.jsx` flagging a fraudulent payload.
-* **Admin Audit:** Table view of historical transaction scores.
+- **Merchant Dashboard:** Instant view of transaction health.
+- **Risk Analysis:** Demonstration of the `RiskGauge.jsx` flagging a fraudulent payload.
+- **Admin Audit:** Table view of historical transaction scores.

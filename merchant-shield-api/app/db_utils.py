@@ -36,7 +36,7 @@ def register_user(username, password):
     return {"message": "User created successfully"}, 201
 
 def authenticate_user(username, password):
-    # Search for the user in the "users" collection
+    # 1. FIX: Changed "User" to "username" to match your DB schema
     user = users_col.find_one({"username": username})
     
     # Verify the password hash
@@ -47,7 +47,7 @@ def authenticate_user(username, password):
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, SECRET_KEY, algorithm="HS256")
         
-        # --- EDITED: Return both the token and the username ---
+        # 2. FIX: Return a nested object so the frontend 'if (resp.user)' check passes
         return {
             "token": token,
             "user": {
