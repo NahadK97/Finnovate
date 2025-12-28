@@ -5,25 +5,38 @@ import { getAllTransactions } from '../../services/api';
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ total: 0, high: 0, moderate: 0, low: 0 });
   const [chartData, setChartData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    const data = await getAllTransactions();
-    // Calculate Stats
-    const counts = data.reduce((acc, curr) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllTransactions();
+      // Calculate Stats
+      const counts = data.reduce((acc, curr) => {
         acc[curr.risk_label]++;
         return acc;
-    }, { high: 0, moderate: 0, low: 0 });
-    setStats({ total: data.length, ...counts });
+      }, { high: 0, moderate: 0, low: 0 });
+      setStats({ total: data.length, ...counts });
 
-    setChartData([
+      setChartData([
         { name: 'Safe', value: counts.low, color: '#10b981' },
         { name: 'Warning', value: counts.moderate, color: '#f59e0b' },
         { name: 'High Risk', value: counts.high, color: '#ef4444' },
       ]);
+    } catch (err) {
+      console.error("Failed to load dashboard data:", err);
+      setError(err.message || "Failed to load dashboard data");
+      setStats({ total: 0, high: 0, moderate: 0, low: 0 });
+      setChartData([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,6 +44,16 @@ const AdminDashboard = () => {
       <div className="page-header">
         <h1>System Overview</h1>
       </div>
+      {error && (
+        <div className="error-message" style={{margin: '1rem 0', padding: '1rem', background: '#fee', border: '1px solid #fcc', borderRadius: '4px'}}>
+          Error: {error}
+        </div>
+      )}
+      {loading && (
+        <div style={{margin: '1rem 0', padding: '1rem', textAlign: 'center'}}>
+          Loading...
+        </div>
+      )}
       {/* STATS CARDS */}
       <div className="stats-grid">
         <div className="stat-card"><h3>Total Scanned</h3><div className="stat-value">{stats.total}</div></div>

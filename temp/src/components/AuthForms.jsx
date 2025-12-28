@@ -6,12 +6,12 @@ import { loginUser, registerMerchant } from '../services/api';
 
 // --- DATA: Quotes & Ads Pool ---
 const CONTENT_POOL = [
-  { text: "Trust is the currency of the new economy.", author: "Rachel Botsman", type: "quote" },
-  { text: "Security is not a product, but a process.", author: "Bruce Schneier", type: "quote" },
-  { text: "Fraud detection is the art of finding a needle in a haystack of needles.", author: "FinTech Daily", type: "quote" },
-  { text: "Your customers expect speed. You demand security. We deliver both.", author: "KaggleGuard AI", type: "ad" },
-  { text: "Stop financial loss before it happens with our Real-time Vector Analysis.", author: "KaggleGuard AI", type: "ad" },
-  { text: "Processing over 1 million transactions daily with 99.9% accuracy.", author: "System Stats", type: "ad" },
+    { text: "Trust is the currency of the new economy.", author: "Rachel Botsman", type: "quote" },
+    { text: "Security is not a product, but a process.", author: "Bruce Schneier", type: "quote" },
+    { text: "Fraud detection is the art of finding a needle in a haystack of needles.", author: "FinTech Daily", type: "quote" },
+    { text: "Your customers expect speed. You demand security. We deliver both.", author: "KaggleGuard AI", type: "ad" },
+    { text: "Stop financial loss before it happens with our Real-time Vector Analysis.", author: "KaggleGuard AI", type: "ad" },
+    { text: "Processing over 1 million transactions daily with 99.9% accuracy.", author: "System Stats", type: "ad" },
 ];
 
 // Shared layout
@@ -28,16 +28,16 @@ const AuthLayout = ({ children }) => {
     <div className="auth-split-screen">
       {/* Left Side - Visuals */}
       <div className="auth-visual-side">
-        <div style={{ fontSize: '2rem', fontWeight: 800, marginBottom: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ShieldCheck size={32} color="#3b82f6" /> KaggleGuard AI
-        </div>
-        <div className="quote-box">
-          <div className="quote-text">"{content.text}"</div>
-          <div className="quote-author">
-            {content.type === 'ad' ? <TrendingUp size={16} style={{ marginRight: 8 }} /> : null}
-            {content.author}
+          <div style={{fontSize:'2rem', fontWeight:800, marginBottom:'auto', display:'flex', alignItems:'center', gap:'10px'}}>
+              <ShieldCheck size={32} color="#3b82f6"/> KaggleGuard AI
           </div>
-        </div>
+          <div className="quote-box">
+              <div className="quote-text">"{content.text}"</div>
+              <div className="quote-author">
+                  {content.type === 'ad' ? <TrendingUp size={16} style={{marginRight:8}}/> : null}
+                  {content.author}
+              </div>
+          </div>
       </div>
       {/* Right Side - Form */}
       <div className="auth-form-side">
@@ -61,27 +61,11 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const resp = await loginUser(formData.username, formData.password);
-      console.log(resp)
-      console.log(resp.token)
-      console.log(resp.user)
-      // If backend returns { token, user } use both. If it returns token in different shape adapt accordingly.
-      if (resp.token && resp.user) {
-        login({ token: resp.token, user: resp.user.username });
-        // EXPLICITLY navigate to the dashboard
-        const target = isAdminRoute ? '/admin/dashboard' : '/dashboard';
-        navigate(target);
-      } else if (resp.user) {
-        // no token, but backend returns user object (sessionless) - still store
-        login({ token: null, user: resp.user });
-      } else if (resp.message) {
-        // If backend returns only message on success, you might want to fetch user profile next
-        // For now set a simple user object
-        login({ token: null, user: { username: formData.username } });
-      } else {
-        throw new Error('Unexpected response from login');
-      }
+      const user = await loginUser(formData.username, formData.password, roleTarget);
+      login(user);
+      navigate(isAdminRoute ? '/admin/dashboard' : '/merchant/dashboard');
     } catch (err) {
       setError(err.message);
     }
@@ -95,17 +79,17 @@ export const Login = () => {
       </div>
       <form onSubmit={handleSubmit}>
         {error && <div className="error-message">{error}</div>}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Username</label>
-          <input type="text" required value={formData.username} onChange={e => setData({ ...formData, username: e.target.value })} />
+        <div style={{marginBottom:'15px'}}>
+            <label style={{display:'block', marginBottom:'8px', fontWeight:600, fontSize:'0.9rem'}}>Username</label>
+            <input type="text" required value={formData.username} onChange={e=>setData({...formData, username:e.target.value})} />
         </div>
-        <div style={{ marginBottom: '25px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Password</label>
-          <input type="password" required value={formData.password} onChange={e => setData({ ...formData, password: e.target.value })} />
+        <div style={{marginBottom:'25px'}}>
+             <label style={{display:'block', marginBottom:'8px', fontWeight:600, fontSize:'0.9rem'}}>Password</label>
+            <input type="password" required value={formData.password} onChange={e=>setData({...formData, password:e.target.value})} />
         </div>
         <button type="submit" className="btn-primary">Login</button>
         {!isAdminRoute && (
-          <div className="auth-link">New here? <Link to="/signup">Create an account</Link></div>
+           <div className="auth-link">New here? <Link to="/signup">Create an account</Link></div>
         )}
       </form>
     </AuthLayout>
@@ -113,55 +97,55 @@ export const Login = () => {
 };
 
 export const Signup = () => {
-  const [formData, setData] = useState({ username: '', password: '', confirmPassword: '' });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { login } = useAuth();
+    const [formData, setData] = useState({ username: '', password: '', confirmPassword: '' });
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+      if(formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match");
+          return;
+      }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const user = await registerMerchant(formData.username, formData.password);
-      login(user);
-
-      // --- REMOVED THE AUTOMATIC DUMMY TRANSACTION CODE FROM HERE ---
-
-      navigate('/merchant/dashboard');
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  return (
-    <AuthLayout>
-      <div className="auth-header">
-        <h2>Get Started</h2>
-        <p>Create your merchant account.</p>
-      </div>
-      <form onSubmit={handleSubmit}>
-        {error && <div className="error-message">{error}</div>}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Username</label>
-          <input type="text" required value={formData.username} onChange={e => setData({ ...formData, username: e.target.value })} />
+      try {
+        const user = await registerMerchant(formData.username, formData.password);
+        login(user);
+        
+        // --- REMOVED THE AUTOMATIC DUMMY TRANSACTION CODE FROM HERE ---
+        
+        navigate('/merchant/dashboard');
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+  
+    return (
+      <AuthLayout>
+        <div className="auth-header">
+            <h2>Get Started</h2>
+            <p>Create your merchant account.</p>
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Password</label>
-          <input type="password" required value={formData.password} onChange={e => setData({ ...formData, password: e.target.value })} />
-        </div>
-        <div style={{ marginBottom: '25px' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Confirm Password</label>
-          <input type="password" required value={formData.confirmPassword} onChange={e => setData({ ...formData, confirmPassword: e.target.value })} />
-        </div>
-        <button type="submit" className="btn-primary">Create Account</button>
-        <div className="auth-link">Already have an account? <Link to="/login">Login</Link></div>
-      </form>
-    </AuthLayout>
-  );
+        <form onSubmit={handleSubmit}>
+          {error && <div className="error-message">{error}</div>}
+           <div style={{marginBottom:'15px'}}>
+                <label style={{display:'block', marginBottom:'8px', fontWeight:600, fontSize:'0.9rem'}}>Username</label>
+                <input type="text" required value={formData.username} onChange={e=>setData({...formData, username:e.target.value})} />
+            </div>
+            <div style={{marginBottom:'15px'}}>
+                    <label style={{display:'block', marginBottom:'8px', fontWeight:600, fontSize:'0.9rem'}}>Password</label>
+                <input type="password" required value={formData.password} onChange={e=>setData({...formData, password:e.target.value})} />
+            </div>
+            <div style={{marginBottom:'25px'}}>
+                    <label style={{display:'block', marginBottom:'8px', fontWeight:600, fontSize:'0.9rem'}}>Confirm Password</label>
+                <input type="password" required value={formData.confirmPassword} onChange={e=>setData({...formData, confirmPassword:e.target.value})} />
+            </div>
+          <button type="submit" className="btn-primary">Create Account</button>
+          <div className="auth-link">Already have an account? <Link to="/login">Login</Link></div>
+        </form>
+      </AuthLayout>
+    );
 };

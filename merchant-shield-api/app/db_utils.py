@@ -60,7 +60,7 @@ def authenticate_user(username, password):
 # Transaction Retrieval ---
 
 def get_transactions_by_user(username):
-    query = {"transaction.User": username}
+    query = {"transaction.username": username}
     results = list(logs_col.find(query, {"_id": 0}))
     return results
 
