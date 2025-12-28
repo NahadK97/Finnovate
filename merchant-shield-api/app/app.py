@@ -5,6 +5,7 @@ import joblib
 import json
 import threading
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from auth import require_api_key
 from db_utils import (
@@ -15,6 +16,7 @@ from validation import validate_payload
 
 
 app = Flask(__name__)
+CORS(app)
 
 # Load model
 MODEL_PATH = "../model/model_v1.pkl"

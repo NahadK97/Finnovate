@@ -6,3 +6,4 @@ pymongo
 python-dotenv
 pyjwt
 werkzeug
+flask-cors
