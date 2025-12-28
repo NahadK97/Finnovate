@@ -47,6 +47,7 @@ def signup():
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.get_json()
+    # This will now receive {"token": "...", "username": "..."} on success
     response, status_code = authenticate_user(data.get('username'), data.get('password'))
     return jsonify(response), status_code
 

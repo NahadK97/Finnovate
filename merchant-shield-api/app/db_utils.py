@@ -36,13 +36,25 @@ def register_user(username, password):
     return {"message": "User created successfully"}, 201
 
 def authenticate_user(username, password):
+    # Search for the user in the "users" collection
     user = users_col.find_one({"username": username})
+    
+    # Verify the password hash
     if user and check_password_hash(user['password'], password):
+        # Generate the JWT token
         token = jwt.encode({
             'user': username,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
         }, SECRET_KEY, algorithm="HS256")
-        return {"token": token}, 200
+        
+        # --- EDITED: Return both the token and the username ---
+        return {
+            "token": token,
+            "user": {
+                "username": username
+            }
+        }, 200
+        
     return {"error": "Invalid credentials"}, 401
 
 # Transaction Retrieval ---
