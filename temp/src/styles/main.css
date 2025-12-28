@@ -1,0 +1,208 @@
+/* =========================================
+   1. BASE VARIABLES & RESET
+========================================= */
+:root {
+    --bg-app: #f8fafc;
+    --text-dark: #1e293b;
+    --text-light: #64748b;
+    --theme-color: #3b82f6; /* Default Blue */
+    --theme-glow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+    --theme-border: rgba(59, 130, 246, 0.2);
+    --sidebar-width: 260px;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --success: #10b981;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-dark);
+    margin: 0; padding: 0;
+    height: 100vh; /* Fixed height for dashboard apps */
+    overflow: hidden; /* Prevent body scroll */
+  }
+  
+  * { box-sizing: border-box; }
+  
+  /* =========================================
+     2. COMMON COMPONENTS
+  ========================================= */
+  .btn-primary, .btn-secondary { width: 100%; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+  .btn-primary { background: var(--theme-color); color: white; border: none; }
+  .btn-primary:hover { filter: brightness(110%); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .btn-secondary { background: white; color: var(--text-light); border: 2px solid #e2e8f0; }
+  .btn-secondary:hover { background: #f8fafc; border-color: var(--theme-color); color: var(--theme-color);}
+  
+  input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; transition: all 0.3s; background: #f8fafc;}
+  input:focus { outline: none; border-color: var(--theme-color); background: white; }
+  
+  /* --- TOAST NOTIFICATION --- */
+  .toast-container {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+  }
+  .toast-item {
+      background: white; padding: 16px 20px; border-radius: 12px; box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+      border-left: 4px solid var(--theme-color); overflow: hidden; position: relative;
+      animation: slideInRight 0.3s ease forwards;
+  }
+  .toast-progress {
+      position: absolute; bottom: 0; left: 0; height: 3px; background: var(--theme-color);
+      /* Animation duration must match the JS timer (e.g., 2s) */
+      animation: progress-bar 2s linear forwards; 
+  }
+  @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes progress-bar { from { width: 100%; } to { width: 0%; } }
+
+  /* =========================================
+     3. LAYOUTS & SIDEBAR (Shared)
+  ========================================= */
+  .app-layout { display: flex; height: 100vh; overflow: hidden; }
+  
+  .sidebar {
+      width: var(--sidebar-width); background: #0f172a; color: white;
+      padding: 25px; display: flex; flex-direction: column; flex-shrink: 0;
+  }
+  .sidebar-brand { font-size: 1.3rem; font-weight: 800; margin-bottom: 3rem; display: flex; align-items: center; gap: 10px; color: white;}
+  .sidebar-menu { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .menu-item {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      text-decoration: none; color: #94a3b8; border-radius: 10px; transition: all 0.2s; font-weight: 600;
+  }
+  .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: white; }
+  .sidebar-user {
+      margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: space-between;
+  }
+  .user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem;}
+  .user-avatar { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center;}
+  .logout-btn { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;}
+  .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+  /* Content Area */
+  .main-content { flex: 1; background: #f1f5f9; padding: 30px; overflow-y: auto; }
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .page-header h1 { margin: 0; color: #111827; font-size: 1.8rem; font-weight: 800;}
+
+  /* =========================================
+     4. DASHBOARD WIDGETS (Stats, Tables, Charts)
+  ========================================= */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
+  .stat-card { background: white; padding: 25px; border-radius: 16px; box-shadow: var(--shadow-sm); }
+  .stat-card h3 { font-size: 0.85rem; color: var(--text-light); margin: 0 0 15px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+  .stat-value { font-size: 2rem; font-weight: 900; color: var(--text-dark); line-height: 1;}
+
+  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; margin-bottom: 30px; height: 350px; }
+  .widget-container { background: white; border-radius: 16px; padding: 25px; box-shadow: var(--shadow-sm); height: 100%; display: flex; flex-direction: column;}
+  .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;}
+  .widget-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700;}
+
+  /* Table Styles */
+  .table-wrapper { flex: 1; overflow: auto; } /* Makes table scrollable within widget */
+  .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .data-table th { position: sticky; top: 0; background: white; text-align: left; padding: 15px; color: var(--text-light); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #f1f5f9; z-index: 2;}
+  .data-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; color: var(--text-dark); font-size: 0.9rem; vertical-align: middle;}
+  .data-table tr:hover td { background: #f8fafc; cursor: pointer; }
+
+  .status-label { padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; display: inline-block;}
+  .status-low { background: #d1fae5; color: #065f46; }
+  .status-moderate { background: #fef3c7; color: #92400e; }
+  .status-high { background: #fee2e2; color: #991b1b; }
+
+  /* =========================================
+     5. MERCHANT DASHBOARD (New Transaction Form)
+  ========================================= */
+  .dashboard-form-container {
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 2.5rem;
+    background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
+    padding: 2.5rem; border-radius: 24px;
+    border: 2px solid var(--theme-border); box-shadow: var(--theme-glow);
+    max-width: 1100px; margin: 0 auto; min-height: 600px;
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  @media (max-width: 900px) { .dashboard-form-container { grid-template-columns: 1fr; } }
+
+  /* Dynamic Theme Application */
+  .dashboard-form-container.theme-safe { --theme-color: #10b981; --theme-glow: 0 10px 30px -5px rgba(16, 185, 129, 0.4); --theme-border: rgba(16, 185, 129, 0.5); }
+  .dashboard-form-container.theme-warning { --theme-color: #f59e0b; --theme-glow: 0 10px 30px -5px rgba(245, 158, 11, 0.4); --theme-border: rgba(245, 158, 11, 0.5); }
+  .dashboard-form-container.theme-danger { --theme-color: #ef4444; --theme-glow: 0 15px 40px -5px rgba(239, 68, 68, 0.5); --theme-border: rgba(239, 68, 68, 0.6); animation: pulse-danger 2s infinite; }
+  @keyframes pulse-danger { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+  /* Form Elements */
+  .visual-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #e2e8f0; padding-right: 2rem;}
+  .credit-card { width: 320px; height: 200px; background: linear-gradient(135deg, var(--text-dark) 0%, var(--theme-color) 100%); border-radius: 20px; padding: 25px; color: white; position: relative; box-shadow: 0 20px 30px -10px rgba(0,0,0,0.3); transition: all 0.6s ease; }
+  .chip { width: 50px; height: 35px; background: #fbbf24; border-radius: 6px; margin-bottom: 40px; opacity: 0.9; }
+  .form-panel { padding-left: 1rem; display: flex; flex-direction: column; overflow: hidden; justify-content: center; }
+  .carousel-track { display: flex; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); width: 200%; }
+  .carousel-slide { width: 50%; flex-shrink: 0; padding: 20px; }
+  .amount-input { width: 100%; padding: 20px; font-size: 2.5rem; font-weight: 900; border: 3px solid #e2e8f0; border-radius: 20px; color: var(--theme-color); text-align: center;}
+  .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0;}
+  .tech-grid input { padding: 10px; text-align: center; font-weight: 600; }
+  
+  /* Risk Gauge */
+  .risk-gauge-container { margin-top: 2rem; width: 100%; }
+  .progress-track { width: 100%; height: 28px; background: #e2e8f0; border-radius: 14px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--theme-color); background-image: linear-gradient(45deg, rgba(255,255,255,.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.2) 50%, rgba(255,255,255,.2) 75%, transparent 75%, transparent); background-size: 24px 24px; transition: width 1s ease-out, background-color 0.6s ease; animation: progress-stripes 1s linear infinite; }
+
+  /* =========================================
+     6. REALISTIC AUTH STYLES (Split Screen)
+  ========================================= */
+  .auth-split-screen { display: flex; height: 100vh; width: 100%; background: white;}
+  .auth-visual-side {
+      flex: 1; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      display: flex; flex-direction: column; justify-content: center; padding: 60px; color: white;
+      position: relative; overflow: hidden;
+  }
+  /* Decorative circles */
+  .auth-visual-side::before { content: ''; position: absolute; top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; filter: blur(80px); }
+  .auth-visual-side::after { content: ''; position: absolute; bottom: -10%; right: -10%; width: 400px; height: 400px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; filter: blur(80px); }
+  
+  .quote-box { position: relative; z-index: 2; max-width: 450px;}
+  .quote-text { font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; font-family: 'Georgia', serif; font-style: italic;}
+  .quote-author { font-size: 1rem; color: #94a3b8; display: flex; align-items: center; gap: 10px;}
+  .quote-author::before { content: ''; width: 30px; height: 2px; background: var(--theme-color); }
+
+  .auth-form-side {
+      flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px;
+      background: var(--bg-app);
+  }
+  .auth-box-realistic {
+      background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow-lg);
+      width: 100%; max-width: 450px;
+  }
+  .auth-header { text-align: center; margin-bottom: 30px; }
+  .auth-header h2 { font-size: 1.8rem; margin-bottom: 10px; }
+  .auth-header p { color: var(--text-light); }
+  .auth-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-light); }
+  .auth-link a { color: var(--theme-color); font-weight: 700; text-decoration: none; }
+  .error-message { background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 20px; text-align: center; border: 1px solid #fecaca;}
+
+  @media (max-width: 900px) { .auth-split-screen { flex-direction: column; } .auth-visual-side { display: none; /* Hide visual on mobile for simplicity */ } .auth-form-side { padding: 20px; } }
+
+  /* Modal (Reused) */
+  .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+  .modal-content { background: white; padding: 35px; border-radius: 24px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+  .v-grid-modal { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; margin-top: 15px; }
+  .v-item { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px; font-size: 0.7rem; text-align: center; border-radius: 8px;}
+
+  /* =========================================
+   7. MODAL INTERNAL STYLING (Add to bottom)
+========================================= */
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
+.modal-header h2 { margin: 0; font-size: 1.5rem; color: var(--text-dark); }
+.close-btn { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: var(--text-light); }
+.close-btn:hover { background: #f1f5f9; color: var(--text-dark); }
+
+.detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
+.detail-label { color: var(--text-light); font-weight: 500; }
+.detail-value { font-weight: 600; color: var(--text-dark); font-family: monospace; }
+
+.risk-summary-box { padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid; }
+.risk-summary-box.low { background: #ecfdf5; border-color: #a7f3d0; color: #064e3b; }
+.risk-summary-box.moderate { background: #fffbeb; border-color: #fde68a; color: #78350f; }
+.risk-summary-box.high { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+.v-grid-modal { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
+.v-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; font-size: 0.75rem; text-align: center; border-radius: 8px; display: flex; flex-direction: column; }
+.v-item strong { display: block; margin-bottom: 2px; color: var(--text-light); font-size: 0.7rem; }

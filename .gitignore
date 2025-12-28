@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Data (optional - decide based on size/sensitivity)
+creditcard.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model files (if they're too large for git)
+# *.pkl
+
+# Outside folder:
+.gitignore                  ← REQUIRED
+creditcard.csv              ← OPTIONAL (for training only)

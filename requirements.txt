@@ -1,0 +1,8 @@
+flask
+pandas
+joblib
+scikit-learn
+pymongo
+python-dotenv
+pyjwt
+werkzeug
